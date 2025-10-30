@@ -1,0 +1,2 @@
+- [x] Pokazać konsole
+- [ ] stworzyć tilesy
