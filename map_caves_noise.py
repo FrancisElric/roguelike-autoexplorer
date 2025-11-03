@@ -28,21 +28,13 @@ def map_gen(width: int, height: int) -> np.array:
         -1,
     )
     # TODO add this when I move map_buffer rendering to a different step
-
-    map_buffer = np.zeros(
-        shape=(height, width),
-        dtype=tcod.console.Console.DTYPE,
-    )
     # map_array and map_buffer must use reversed dimensions (width <-> height)
 
-    # This \/ will be later moved to a seperate file i think
-    with np.nditer(map_array, flags=["multi_index"]) as it:
+    with np.nditer(map_array, op_flags=["readwrite"]) as it:
         for x in it:
             if x[...] < -0.2:
-                map_buffer["ch"][it.multi_index] = ord("#")
-                map_buffer["fg"][it.multi_index] = (255, 255, 255, 255)
-                map_buffer["bg"][it.multi_index] = (100, 100, 100, 255)
+                x[...] = 1
             else:
-                map_buffer["ch"][it.multi_index] = ord(" ")
+                x[...] = 0
 
-    return map_buffer
+    return map_array

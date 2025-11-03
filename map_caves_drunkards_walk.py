@@ -1,26 +1,21 @@
 import random
-from pickle import GLOBAL
-
 import numpy as np
-import tcod
 
 DURATION = 50
 DRUNKARDS = 40
 STRAIGHT_TIMER = 3
 
 
-def map_gen(width: int, height: int) -> np.ndarray:
+def map_gen(width: int, height: int, map_array=None) -> np.ndarray:
     """
     Map generation based on random walk
     :param width:
     :param height:
+    :param map_array (optional)
     :return:
     """
-    map_array = np.ones((height, width))
-    map_buffer = np.zeros(
-        shape=(height, width),
-        dtype=tcod.console.Console.DTYPE,
-    )
+    if map_array is None:
+        map_array = np.ones((height, width), dtype="int8")
     visited_cords = []
 
     def dig(x: int, y: int) -> tuple[int, int]:
@@ -36,17 +31,7 @@ def map_gen(width: int, height: int) -> np.ndarray:
 
     def random_direction() -> tuple[int, int]:
         # Helper function that chooses a random direction and returns delta
-        x, y = (0, 0)
-        match random.randint(1, 4):
-            case 1:
-                x += 1
-            case 2:
-                x -= 1
-            case 3:
-                y += 1
-            case 4:
-                y -= 1
-        return x, y
+        return random.choice(((0, 1), (1, 0), (0, -1), (-1, 0)))
 
     # A point to start the walk, set to center of the map_before
     x, y = int(width / 2), int(height / 2)
@@ -61,13 +46,4 @@ def map_gen(width: int, height: int) -> np.ndarray:
                 x, y = dig(x, y)
         x, y = random.choice(visited_cords)
 
-    # This \/ will be later moved to a seperate file i think
-    with np.nditer(map_array, flags=["multi_index"]) as it:
-        for x in it:
-            if x[...] == 1:
-                map_buffer["ch"][it.multi_index] = ord("#")
-                map_buffer["fg"][it.multi_index] = (255, 255, 255, 255)
-                map_buffer["bg"][it.multi_index] = (100, 100, 100, 255)
-            else:
-                map_buffer["ch"][it.multi_index] = ord(" ")
-    return map_buffer
+    return map_array

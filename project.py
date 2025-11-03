@@ -1,7 +1,9 @@
 import tcod
-import draft_caves_noise
-import draft_caves_drunkards_walk
-import draft_caves_conway
+import map_caves_noise
+import map_caves_drunkards_walk
+import map_caves_conway
+import map_load_premade
+from map_renderer import render_map, map_array_inverter
 import numpy as np
 
 WIDTH, HEIGHT = 80, 60  # Console width and height in tiles.
@@ -20,8 +22,9 @@ def main() -> None:
         16,
         tcod.tileset.CHARMAP_CP437,
     )
-    map = draft_caves_conway.map_gen(WIDTH, HEIGHT)
-    map_type = "conway"
+    map = render_map(map_load_premade.map_gen(80, 60, "map_1.txt"))
+    map_type = "pre-made"
+
     # Create the main console.
     console = tcod.console.Console(WIDTH, HEIGHT)
 
@@ -52,13 +55,20 @@ def main() -> None:
                     case tcod.event.KeyDown(sym=tcod.event.KeySym.R):
                         if map_type == "drunkards":
                             map_type = "noise"
-                            map = draft_caves_noise.map_gen(WIDTH, HEIGHT)
+                            map = render_map(map_caves_noise.map_gen(WIDTH, HEIGHT))
                         elif map_type == "noise":
                             map_type = "conway"
-                            map = draft_caves_conway.map_gen(WIDTH, HEIGHT)
+                            map = render_map(map_caves_conway.map_gen(WIDTH, HEIGHT))
+                        elif map_type == "conway":
+                            map_type = "pre-made-map_2"
+                            map = render_map(
+                                map_load_premade.map_gen(WIDTH, HEIGHT, "map_1.txt")
+                            )
                         else:
                             map_type = "drunkards"
-                            map = draft_caves_drunkards_walk.map_gen(WIDTH, HEIGHT)
+                            map = render_map(
+                                map_caves_drunkards_walk.map_gen(WIDTH, HEIGHT)
+                            )
 
         # The window will be closed after the above with-block exits.
 
