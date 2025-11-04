@@ -1,8 +1,10 @@
 import numpy as np
 import tcod
+import time
 
 
 def render_map(map_array):
+    start_time = time.time()
     map_buffer = np.zeros_like(
         map_array,
         dtype=tcod.console.Console.DTYPE,
@@ -16,6 +18,7 @@ def render_map(map_array):
                 map_buffer["bg"][it.multi_index] = (100, 100, 100, 255)
             else:
                 map_buffer["ch"][it.multi_index] = ord(" ")
+    print(f"rendering took {(time.time() - start_time) * 1000:2f} ms")
     return map_buffer
 
 
@@ -26,4 +29,5 @@ def map_array_inverter(map_array):
                 x[...] = 0
             elif x[...] == 0:
                 x[...] = 1
+
     return map_array

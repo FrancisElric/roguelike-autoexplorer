@@ -1,6 +1,9 @@
-- [x] Pokazać konsole
-- [x] Stowrzyć algorytmy generowania dwóch cave'ów
-- [x] move map render logic to project.py
-- [ ] Dodać opcję wczytania premade-mapy
-- [ ] stworzyć tilesy
+## How to add a character on screen
+- [x] engine class that handles rendering and event_handling
+## Tiles:
+- [/] more research on tiles
+- [/] stworzyć tilesy
 
+## Maintenance:
+- [ ] rename map_buffer to map_rgb
+- [x] move all map making logic to one file
