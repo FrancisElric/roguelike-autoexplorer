@@ -73,11 +73,11 @@ class Engine:
     def load_new_level(self):
         match self.level:
             case 1:
-                self.change_map(map_gen.simplex_noise(80, 60))
-            case 2:
-                self.change_map(map_gen.conway(80, 60))
-            case _:
                 self.change_map(map_gen.random_walk(80, 60))
+            case 2:
+                self.change_map(map_gen.simplex_noise(80, 60))
+            case _:
+                self.change_map(map_gen.conway(80, 60))
         self.level += 1
 
     def compute_transparency(self, map_array):
