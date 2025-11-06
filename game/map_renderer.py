@@ -29,9 +29,9 @@ def map_array_to_rgb(map_array, map_explored, map_visible):
 def map_array_inverter(map_array):
     with np.nditer(map_array, op_flags=["readwrite"]) as it:
         for x in it:
-            if x[...] == 1:
+            if x == 1:
                 x[...] = 0
-            elif x[...] == 0:
+            elif x == 0:
                 x[...] = 1
 
     return map_array

@@ -12,3 +12,4 @@
 - [x] move all map making logic to one file
 - [ ] fill up spaces that do not connect to other spaces
 - [ ] standardize the use of x and y
+- [ ] use vectorization instead of nditter

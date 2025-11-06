@@ -5,14 +5,14 @@ import random
 import game.tiles as tiles
 
 
-def spawn_point(map_array) -> tuple[int, int] | Exception:
+def look_for_element(map_array, tile_element) -> tuple[int, int] | Exception:
     """Sets spawn-point where stairs are"""
-    with np.nditer(map_array, flags=["multi_index"]) as it:
-        for x in it:
-            print(x)
-            if x == tiles.TILE_STAIRS_UP:
-                return it.multi_index[1], it.multi_index[0]
-    return Exception("Couldn't find stairs")
+    # Find all indices where stairs are located
+    result = np.argwhere(map_array == tile_element)
+    if result.size == 0:
+        raise ValueError("Couldn't find stairs")
+    y, x = result[0]
+    return x, y
 
 
 def set_stairs(width: int, height: int, map_array):

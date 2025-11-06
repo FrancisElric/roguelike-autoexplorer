@@ -51,11 +51,35 @@ class Engine:
         # player is separate to make sure it will be render last so it will be always visible
         context.present(console)
 
-    def change_map(self, map_array):
-        self.map_array = map_array
-        self.map_transparency = self.compute_transparency(self.map_array)
+    def change_map(self, map_type, preload=None):
+        while True:
+            match map_type:
+                case "noise":
+                    self.map_array = map_gen.simplex_noise(80, 60)
+                case "drunkards":
+                    self.map_array = map_gen.random_walk(80, 60)
+                case "conway":
+                    self.map_array = map_gen.conway(80, 60)
+                case "preload":
+                    ...  # TODO implement
+            self.map_transparency = self.compute_transparency(self.map_array)
+            start = map_gen.look_for_element(self.map_array, tiles.TILE_STAIRS_UP)
+            end = map_gen.look_for_element(self.map_array, tiles.TILE_STAIRS_DOWN)
+
+            graph = tcod.path.SimpleGraph(
+                cost=self.map_transparency.astype("int8"),
+                cardinal=1,
+                diagonal=0,
+            )
+            pf = tcod.path.Pathfinder(graph)
+            print(start, end)
+            pf.add_root((start[1], start[0]))
+            print(pf.path_from((end[1], end[0])))
+            if pf.path_from((end[1], end[0]))[1:].tolist() != []:
+                break
+            print("Map skipped, no path")
         self.map_explored = np.zeros_like(self.map_array, dtype="bool")
-        self.player.x, self.player.y = map_gen.spawn_point(self.map_array)
+        self.player.x, self.player.y = start[0], start[1]
         self.update_rgb_with_fov()
 
     def try_moving(self, delta: tuple, entity):
@@ -66,18 +90,18 @@ class Engine:
             self.update_rgb_with_fov()
 
     def check_tile_interaction(self):
-        print(self.map_array[self.player.y, self.player.x])
+        # print(self.map_array[self.player.y, self.player.x])
         if self.map_array[self.player.y, self.player.x] == tiles.TILE_STAIRS_DOWN:
             self.load_new_level()
 
     def load_new_level(self):
         match self.level:
             case 1:
-                self.change_map(map_gen.random_walk(80, 60))
+                self.change_map("drunkards")
             case 2:
-                self.change_map(map_gen.simplex_noise(80, 60))
+                self.change_map("noise")
             case _:
-                self.change_map(map_gen.conway(80, 60))
+                self.change_map("conway")
         self.level += 1
 
     def compute_transparency(self, map_array):
@@ -92,7 +116,7 @@ class Engine:
         self.map_visible = tcod.map.compute_fov(
             self.map_transparency,
             (self.player.y, self.player.x),
-            radius=10,
+            radius=15,
             algorithm=tcod.constants.FOV_DIAMOND,
         )
         self.map_explored |= self.map_visible
