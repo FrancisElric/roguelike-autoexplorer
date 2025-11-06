@@ -1,5 +1,5 @@
 import tcod
-import game.map_gen as map_gen
+import game.map_generation as map_gen
 from game.engine import Engine
 from game.entity import Entity
 from game.map_renderer import render_map
@@ -15,7 +15,7 @@ def main() -> None:
     # Load the font, 16 by 16, using DF layout
     # Font source: https://dwarffortresswiki.org/index.php/Tileset_repository#1.C3.971
     tileset = tcod.tileset.load_tilesheet(
-        "assets/anikki_square_8x8.png",
+        "assets/16x16-RogueYun-AgmEdit.png",
         16,
         16,
         tcod.tileset.CHARMAP_CP437,
@@ -27,7 +27,8 @@ def main() -> None:
     map_type = "pre-made"
 
     # Create player
-    player = Entity(1, 1, "☺", (255, 255, 0))
+    player_x, player_y = map_gen.spawn_point(WIDTH, HEIGHT, map_array)
+    player = Entity(player_x, player_y, "☺", (255, 255, 0))
     # enemy_1 = Entity(4, 5, "S", (255, 0, 0))
     # entities = list()
     # entities.append(enemy_1)
@@ -59,7 +60,7 @@ def main() -> None:
             # For a non-blocking event loop replace `tcod.event.wait` with `tcod.event.get`.
             for event in tcod.event.wait():
                 context.convert_event(event)  # Sets tile coordinates for mouse events.
-                # DEBUG print(event)  # Print event names and attributes.
+                print(event)  # Print event names and attributes.
                 engine.event_handling(event)
 
         # The window will be closed after the above with-block exits.

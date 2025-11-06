@@ -2,6 +2,17 @@ import numpy as np
 import tcod
 import time
 import random
+import game.tiles as tiles
+
+
+def spawn_point(width: int, height: int, map_array) -> tuple[int, int]:
+    x, y = int(width / 2), int(height / 2)
+    while tiles.TILES_COLLISION[map_array[y, x]]:
+        x += 1
+    return x, y
+
+
+def stairs_canditade(): ...
 
 
 def conway(width: int, height: int, map_array=None) -> np.ndarray:
@@ -36,26 +47,18 @@ def conway(width: int, height: int, map_array=None) -> np.ndarray:
                 )
                 # TODO change rules to produce better caves
                 # Rules of life
-                # print(f'{"#"*20}')
-                # print(f'visited {i},{j} and sum is {sum_of_all}')
-                # print(f'selection: \n{map_array[i-1:i+2,j-1:j+2]}')
                 if sum_of_all <= 1:
-                    # print('sum_of_all <= 1')
                     map_after[i, j] = 0
                     continue
                 if sum_of_all >= 4:
-                    # print('sum_of_all >= 4')
                     map_after[i, j] = 0
                     continue
                 if map_array[i, j] == 1 and sum_of_all in range(2, 4):
-                    # print('map_array[i,j] == 1 and sum_of_all in range(2,4)')
                     map_after[i, j] = 1
                     continue
                 if map_array[i, j] == 0 and sum_of_all == 3:
-                    # print('map_array[i,j] == 0 and sum_of_all == 3')
                     map_after[i, j] = 1
                     continue
-                # print('Out of cases')
                 map_after[i, j] = 0
         map_array = map_after
 

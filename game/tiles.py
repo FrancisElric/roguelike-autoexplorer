@@ -1,13 +1,19 @@
-tiles = (
-    {"key": 0, "name": "floor", "collision": False},
-    {"key": 1, "name": "wall", "collision": True},
-)
-
 # Tile types
 TILE_EMPTY = 0
 TILE_WALL = 1
+TILE_STAIRS_UP = 2
+TILE_STAIRS_DOWN = 3
+TILES_LENGTH = 4
 
 # Tile collisions
-TILES_COLLISION = [None] * 10
+TILES_COLLISION = [None] * TILES_LENGTH
 TILES_COLLISION[TILE_EMPTY] = False
 TILES_COLLISION[TILE_WALL] = True
+TILES_COLLISION[TILE_STAIRS_UP] = False
+TILES_COLLISION[TILE_STAIRS_DOWN] = False
+
+TILES_RGB = [None] * TILES_LENGTH
+TILES_RGB[TILE_EMPTY] = (ord(" "), (0, 0, 0, 0), (0, 0, 0, 0))
+TILES_RGB[TILE_WALL] = (ord("#"), (255, 255, 255, 255), (100, 100, 100, 255))
+TILES_RGB[TILE_STAIRS_UP] = (ord(">"), (255, 255, 0, 255), (0, 0, 0, 0))
+TILES_RGB[TILE_STAIRS_DOWN] = (ord("<"), (255, 255, 0, 255), (0, 0, 0, 0))

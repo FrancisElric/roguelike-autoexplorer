@@ -1,6 +1,7 @@
 import numpy as np
 import tcod
 import time
+import game.tiles as tiles
 
 
 def render_map(map_array):
@@ -12,12 +13,10 @@ def render_map(map_array):
 
     with np.nditer(map_array, flags=["multi_index"]) as it:
         for x in it:
-            if x[...] == 1:
-                map_buffer["ch"][it.multi_index] = ord("#")
-                map_buffer["fg"][it.multi_index] = (255, 255, 255, 255)
-                map_buffer["bg"][it.multi_index] = (100, 100, 100, 255)
-            else:
-                map_buffer["ch"][it.multi_index] = ord(" ")
+            map_buffer["ch"][it.multi_index] = tiles.TILES_RGB[x][0]
+            map_buffer["fg"][it.multi_index] = tiles.TILES_RGB[x][1]
+            map_buffer["bg"][it.multi_index] = tiles.TILES_RGB[x][2]
+
     print(f"rendering took {(time.time() - start_time) * 1000:2f} ms")
     return map_buffer
 
