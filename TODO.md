@@ -1,7 +1,9 @@
-## FOV
-- [ ] read [this](https://python-tcod.readthedocs.io/en/latest/tcod/map.html)
+## TODO
+### Add auto-exploration
+- [ ] [dijkstra maps](https://www.roguebasin.com/index.php/Dijkstra_Maps_Visualized)
+- [ ] [tcod pathfinding](https://python-tcod.readthedocs.io/en/latest/tcod/path.html)
 
-## Tiles:
+### Tiles:
 - [/] more research on tiles
 - [x] stworzyć tilesy
 

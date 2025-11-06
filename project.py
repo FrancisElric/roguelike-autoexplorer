@@ -2,7 +2,7 @@ import tcod
 import game.map_generation as map_gen
 from game.engine import Engine
 from game.entity import Entity
-from game.map_renderer import render_map
+from game.map_renderer import map_array_to_rgb
 
 WIDTH, HEIGHT = 80, 60
 # width ->>>>
@@ -22,16 +22,17 @@ def main() -> None:
     )
 
     # Create a map
-    map_array = map_gen.pre_made(80, 60, "prefabs/map_1.txt")
-    map_rgb = render_map(map_array)
-    map_type = "pre-made"
+    # map_array = map_gen.pre_made(80, 60, "prefabs/map_1.txt")
+    # map_rgb = map_array_to_rgb(map_array)
+    # map_type = "pre-made"
+    # For now engine deals with map loading
 
     # Create player
-    player_x, player_y = map_gen.spawn_point(map_array)
+    player_x, player_y = 1, 1
     player = Entity(player_x, player_y, "☺", (255, 255, 0))
 
     # Create engine instance
-    engine = Engine(map_array, map_rgb, player)
+    engine = Engine(player)
 
     # Create the main console.
     console = tcod.console.Console(WIDTH, HEIGHT)
@@ -45,13 +46,13 @@ def main() -> None:
         # New window for a console of size columns×rows.
     ) as context:
         while True:
-            console.print(
-                x=0,
-                y=0,
-                text=map_type,
-                fg=(255, 255, 255),
-                bg=(100, 100, 100),
-            )
+            # console.print(
+            #     x=0,
+            #     y=0,
+            #     text=map_type,
+            #     fg=(255, 255, 255),
+            #     bg=(100, 100, 100),
+            # )
             engine.render(context, console)
 
             # This event loop will wait until at least one event is processed before exiting.
