@@ -23,7 +23,7 @@ def main() -> None:
 
     # Create a map
     map_array = map_gen.pre_made(80, 60, "prefabs/map_1.txt")
-    map_buffer = render_map(map_array)
+    map_rgb = render_map(map_array)
     map_type = "pre-made"
 
     # Create player
@@ -31,7 +31,7 @@ def main() -> None:
     player = Entity(player_x, player_y, "☺", (255, 255, 0))
 
     # Create engine instance
-    engine = Engine(map_array, map_buffer, player)
+    engine = Engine(map_array, map_rgb, player)
 
     # Create the main console.
     console = tcod.console.Console(WIDTH, HEIGHT)

@@ -6,19 +6,19 @@ import game.tiles as tiles
 
 def render_map(map_array):
     start_time = time.time()
-    map_buffer = np.zeros_like(
+    map_rgb = np.zeros_like(
         map_array,
         dtype=tcod.console.Console.DTYPE,
     )
 
     with np.nditer(map_array, flags=["multi_index"]) as it:
         for x in it:
-            map_buffer["ch"][it.multi_index] = tiles.TILES_RGB[x][0]
-            map_buffer["fg"][it.multi_index] = tiles.TILES_RGB[x][1]
-            map_buffer["bg"][it.multi_index] = tiles.TILES_RGB[x][2]
+            map_rgb["ch"][it.multi_index] = tiles.TILES_RGB[x][0]
+            map_rgb["fg"][it.multi_index] = tiles.TILES_RGB[x][1]
+            map_rgb["bg"][it.multi_index] = tiles.TILES_RGB[x][2]
 
     print(f"rendering took {(time.time() - start_time) * 1000:2f} ms")
-    return map_buffer
+    return map_rgb
 
 
 def map_array_inverter(map_array):

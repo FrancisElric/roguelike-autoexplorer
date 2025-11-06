@@ -5,9 +5,9 @@ from game.map_renderer import render_map
 
 
 class Engine:
-    def __init__(self, map_array, map_buffer, player, entities=()):
+    def __init__(self, map_array, map_rgb, player, entities=()):
         self.map_array = map_array
-        self.map_buffer = map_buffer
+        self.map_rgb = map_rgb
         self.player = player
         self.entities = entities
         self.level = 1
@@ -31,7 +31,7 @@ class Engine:
 
     def render(self, context, console):
         console.clear()
-        console.rgb[:] = self.map_buffer
+        console.rgb[:] = self.map_rgb
         for entity in self.entities:
             console.print(
                 entity.x,
@@ -48,7 +48,7 @@ class Engine:
 
     def change_map(self, map_array):
         self.map_array = map_array
-        self.map_buffer = render_map(map_array)
+        self.map_rgb = render_map(map_array)
         self.player.x, self.player.y = map_gen.spawn_point(self.map_array)
 
     def try_moving(self, delta: tuple, entity):

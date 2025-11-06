@@ -174,8 +174,8 @@ def simplex_noise(width: int, height: int) -> np.array:
         -1,
         -1,
     )
-    # TODO add this when I move map_buffer rendering to a different step
-    # map_array and map_buffer must use reversed dimensions (width <-> height)
+    # TODO add this when I move map_rgb rendering to a different step
+    # map_array and map_rgb must use reversed dimensions (width <-> height)
 
     with np.nditer(map_array, op_flags=["readwrite"]) as it:
         for x in it:
