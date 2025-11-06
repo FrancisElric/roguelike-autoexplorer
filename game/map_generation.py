@@ -5,14 +5,30 @@ import random
 import game.tiles as tiles
 
 
-def spawn_point(width: int, height: int, map_array) -> tuple[int, int]:
-    x, y = int(width / 2), int(height / 2)
+def spawn_point(map_array) -> tuple[int, int] | Exception:
+    """Sets spawn-point where stairs are"""
+    with np.nditer(map_array, flags=["multi_index"]) as it:
+        for x in it:
+            print(x)
+            if x == tiles.TILE_STAIRS_UP:
+                return it.multi_index[1], it.multi_index[0]
+    return Exception("Couldn't find stairs")
+
+
+def set_stairs(width: int, height: int, map_array):
+    x, y = 1, 1
     while tiles.TILES_COLLISION[map_array[y, x]]:
         x += 1
-    return x, y
+        y += 1
+    map_array[y, x] = tiles.TILE_STAIRS_UP
 
+    x, y = width - 2, height - 2
+    while tiles.TILES_COLLISION[map_array[y, x]]:
+        x -= 1
+        y -= 1
+    map_array[y, x] = tiles.TILE_STAIRS_DOWN
 
-def stairs_canditade(): ...
+    return map_array
 
 
 def conway(width: int, height: int, map_array=None) -> np.ndarray:
@@ -74,6 +90,7 @@ def conway(width: int, height: int, map_array=None) -> np.ndarray:
         1,
     )
     print(f"conway took {(time.time() - start_time) * 1000:2f} ms")
+    set_stairs(width, height, map_array)
     return map_array
 
 
@@ -87,7 +104,7 @@ def random_walk(width: int, height: int, map_array=None) -> np.ndarray:
     """
     DURATION = 50
     DRUNKARDS = 40
-    STRAIGHT_TIMER = 3
+    STRAIGHT_TIMER = 6  # fun to play with
 
     start_time = time.time()
     if map_array is None:
@@ -110,7 +127,9 @@ def random_walk(width: int, height: int, map_array=None) -> np.ndarray:
         return random.choice(((0, 1), (1, 0), (0, -1), (-1, 0)))
 
     # A point to start the walk, set to center of the map_before
-    x, y = int(width / 2), int(height / 2)
+    x, y = int(width / 2) + random.randint(-10, 10), int(height / 2) + random.randint(
+        -10, 10
+    )
 
     for _ in range(DRUNKARDS):
         for _ in range(DURATION):
@@ -121,6 +140,11 @@ def random_walk(width: int, height: int, map_array=None) -> np.ndarray:
             else:
                 x, y = dig(x, y)
         x, y = random.choice(visited_cords)
+
+    # Custom stair setting function cuz main one would not work here
+    visited_cords = sorted(visited_cords, key=lambda coord: (coord[1] + coord[0]))
+    map_array[visited_cords[-1]] = tiles.TILE_STAIRS_DOWN
+    map_array[visited_cords[0]] = tiles.TILE_STAIRS_UP
     print(f"drunkards took {(time.time() - start_time) * 1000:2f} ms")
     return map_array
 
@@ -161,6 +185,8 @@ def simplex_noise(width: int, height: int) -> np.array:
                 x[...] = 0
     map_array = map_array.astype("int8")
     print(f"noise took {(time.time() - start_time) * 1000:2f} ms")
+    set_stairs(width, height, map_array)
+    # TODO will need to fill up spaces that do not connect to center of the map
     return map_array
 
 

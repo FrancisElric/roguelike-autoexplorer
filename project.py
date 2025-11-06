@@ -4,13 +4,13 @@ from game.engine import Engine
 from game.entity import Entity
 from game.map_renderer import render_map
 
-WIDTH, HEIGHT = 80, 60  # Console width and height in tiles.
+WIDTH, HEIGHT = 80, 60
 # width ->>>>
 # height -^^^^
 
 
 def main() -> None:
-    """Script entry point."""
+    """Main loop"""
 
     # Load the font, 16 by 16, using DF layout
     # Font source: https://dwarffortresswiki.org/index.php/Tileset_repository#1.C3.971
@@ -27,26 +27,24 @@ def main() -> None:
     map_type = "pre-made"
 
     # Create player
-    player_x, player_y = map_gen.spawn_point(WIDTH, HEIGHT, map_array)
+    player_x, player_y = map_gen.spawn_point(map_array)
     player = Entity(player_x, player_y, "☺", (255, 255, 0))
-    # enemy_1 = Entity(4, 5, "S", (255, 0, 0))
-    # entities = list()
-    # entities.append(enemy_1)
 
-    # Create engine
+    # Create engine instance
     engine = Engine(map_array, map_buffer, player)
 
     # Create the main console.
     console = tcod.console.Console(WIDTH, HEIGHT)
 
     # Create a window based on this console and tileset.
-    with tcod.context.new(  # New window for a console of size columns×rows.
+    with tcod.context.new(
         columns=console.width,
         rows=console.height,
         tileset=tileset,
         title="Roguelike for CS50P",
+        # New window for a console of size columns×rows.
     ) as context:
-        while True:  # Main loop, runs until SystemExit is raised.
+        while True:
             console.print(
                 x=0,
                 y=0,
@@ -60,10 +58,8 @@ def main() -> None:
             # For a non-blocking event loop replace `tcod.event.wait` with `tcod.event.get`.
             for event in tcod.event.wait():
                 context.convert_event(event)  # Sets tile coordinates for mouse events.
-                print(event)  # Print event names and attributes.
+                # DEBUG print(event)  # Print event names and attributes.
                 engine.event_handling(event)
-
-        # The window will be closed after the above with-block exits.
 
 
 if __name__ == "__main__":

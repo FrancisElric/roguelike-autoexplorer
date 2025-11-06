@@ -27,7 +27,7 @@ class Engine:
             case tcod.event.KeyDown(sym=tcod.event.KeySym.RETURN):
                 self.check_tile_interaction()
             case tcod.event.KeyDown(sym=tcod.event.KeySym.MINUS):
-                self.new_level()
+                self.load_new_level()
 
     def render(self, context, console):
         console.clear()
@@ -46,9 +46,10 @@ class Engine:
         # player is separate to make sure it will be render last so it will be always visible
         context.present(console)
 
-    def change_map(self, map_array, map_buffer):
+    def change_map(self, map_array):
         self.map_array = map_array
-        self.map_buffer = map_buffer
+        self.map_buffer = render_map(map_array)
+        self.player.x, self.player.y = map_gen.spawn_point(self.map_array)
 
     def try_moving(self, delta: tuple, entity):
         dx = entity.x - delta[0]
@@ -58,33 +59,15 @@ class Engine:
 
     def check_tile_interaction(self):
         print(self.map_array[self.player.y, self.player.x])
-        if self.map_array[self.player.y, self.player.x] == tiles.TILE_STAIRS_UP:
-            self.new_level()
+        if self.map_array[self.player.y, self.player.x] == tiles.TILE_STAIRS_DOWN:
+            self.load_new_level()
 
-    def new_level(self):
+    def load_new_level(self):
         match self.level:
             case 1:
-                self.map_array = map_gen.simplex_noise(80, 60)
-                self.map_buffer = render_map(self.map_array)
+                self.change_map(map_gen.simplex_noise(80, 60))
+            case 2:
+                self.change_map(map_gen.conway(80, 60))
             case _:
-                self.map_array = map_gen.simplex_noise(80, 60)
-                self.map_buffer = render_map(self.map_array)
+                self.change_map(map_gen.random_walk(80, 60))
         self.level += 1
-
-
-# case tcod.event.KeyDown(sym=tcod.event.KeySym.R):
-#     if map_type == "drunkards":
-#         map_type = "noise"
-#         engine.ch
-#         map = render_map(map_caves_noise.map_gen(WIDTH, HEIGHT))
-#     elif map_type == "noise":
-#         map_type = "conway"
-#         map = render_map(map_caves_conway.map_gen(WIDTH, HEIGHT))
-#     elif map_type == "conway":
-#         map_type = "pre-made-map_2"
-#         map = render_map(
-#             map_load_premade.map_gen(WIDTH, HEIGHT, "prefabs/map_1.txt")
-#         )
-#     else:
-#         map_type = "drunkards"
-#         map = render_map(map_caves_drunkards_walk.map_gen(WIDTH, HEIGHT))
