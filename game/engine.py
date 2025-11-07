@@ -1,5 +1,6 @@
 import numpy as np
 import tcod
+import time
 import game.map_generation as map_gen
 import game.tiles as tiles
 from game.map_renderer import map_array_to_rgb
@@ -15,7 +16,7 @@ class Engine:
 
         self.map_explored = np.zeros_like(self.map_array, dtype="bool")
         self.map_transparency = self.compute_transparency(self.map_array)
-        self.update_rgb_with_fov()
+        # self.update_rgb_with_fov()
 
     def event_handling(self, event):
         match event:
@@ -36,6 +37,7 @@ class Engine:
 
     def render(self, context, console):
         console.clear()
+        self.update_rgb_with_fov()
         console.rgb[:] = self.map_rgb
         for entity in self.entities:
             console.print(
@@ -52,6 +54,7 @@ class Engine:
         context.present(console)
 
     def change_map(self, map_type, preload=None):
+        start_time = time.time()
         while True:
             match map_type:
                 case "noise":
@@ -72,22 +75,21 @@ class Engine:
                 diagonal=0,
             )
             pf = tcod.path.Pathfinder(graph)
-            print(start, end)
             pf.add_root((start[1], start[0]))
-            print(pf.path_from((end[1], end[0])))
-            if pf.path_from((end[1], end[0]))[1:].tolist() != []:
+            self.path_to_end = pf.path_to((end[1], end[0])).tolist()
+            print(self.path_to_end)
+            if self.path_to_end[1:] != []:
                 break
             print("Map skipped, no path")
         self.map_explored = np.zeros_like(self.map_array, dtype="bool")
         self.player.x, self.player.y = start[0], start[1]
-        self.update_rgb_with_fov()
+        print(f"map changing took {(time.time() - start_time) * 1000:2f} ms")
 
     def try_moving(self, delta: tuple, entity):
         dx = entity.x - delta[0]
         dy = entity.y - delta[1]
         if self.map_array[dy, dx] != 1:
             entity.move(dx, dy)
-            self.update_rgb_with_fov()
 
     def check_tile_interaction(self):
         # print(self.map_array[self.player.y, self.player.x])
@@ -110,7 +112,6 @@ class Engine:
             for x in it:
                 map_transparency[it.multi_index] = not tiles.TILES_COLLISION[x]
         return map_transparency
-        # return np.asarray(tiles.TILES_COLLISION)[map_array].astype("bool")
 
     def update_rgb_with_fov(self):
         self.map_visible = tcod.map.compute_fov(
