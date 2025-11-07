@@ -6,16 +6,16 @@ import game.tiles as tiles
 
 
 def look_for_element(map_array, tile_element) -> tuple[int, int] | Exception:
-    """Sets spawn-point where stairs are"""
-    # Find all indices where stairs are located
+    """Looks for an element in given map_array"""
     result = np.argwhere(map_array == tile_element)
     if result.size == 0:
-        raise ValueError("Couldn't find stairs")
+        raise ValueError(f"Couldn't find {tile_element}")
     y, x = result[0]
     return x, y
 
 
 def set_stairs(width: int, height: int, map_array):
+    """Adds stairs to given map_array"""
     x, y = 1, 1
     while tiles.TILES_COLLISION[map_array[y, x]]:
         x += 1
@@ -174,7 +174,6 @@ def simplex_noise(width: int, height: int) -> np.array:
         -1,
         -1,
     )
-    # TODO add this when I move map_rgb rendering to a different step
     # map_array and map_rgb must use reversed dimensions (width <-> height)
 
     with np.nditer(map_array, op_flags=["readwrite"]) as it:
