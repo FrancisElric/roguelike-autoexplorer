@@ -34,6 +34,8 @@ class Engine:
                 self.check_tile_interaction()
             case tcod.event.KeyDown(sym=tcod.event.KeySym.MINUS):
                 self.load_new_level()
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.EQUALS):
+                self.omnipresence()
 
     def render(self, context, console):
         console.clear()
@@ -125,3 +127,6 @@ class Engine:
         self.map_rgb = map_array_to_rgb(
             self.map_array, self.map_explored, self.map_visible
         )
+
+    def omnipresence(self):
+        self.map_explored = np.ones_like(self.map_array, dtype="bool")
