@@ -7,15 +7,15 @@ from game.map_renderer import map_array_to_rgb
 
 
 class Engine:
-    def __init__(self, player, entities=()):
+    def __init__(self, player, context, console, entities=()):
         self.player = player
         self.entities = entities
         self.level = 1
-        # Map variables
-        self.map_array = map_gen.pre_made(80, 60, "prefabs/map_1.txt")
-
-        self.map_explored = np.zeros_like(self.map_array, dtype="bool")
-        self.map_transparency = self.compute_transparency(self.map_array)
+        self.context = context
+        self.console = console
+        # # Map variables
+        # self.map_explored = np.zeros_like(self.map_array, dtype="bool")
+        # self.map_transparency = self.compute_transparency(self.map_array)
         # self.update_rgb_with_fov()
 
     def event_handling(self, event):
@@ -32,28 +32,32 @@ class Engine:
                 self.try_moving((0, -1), self.player)
             case tcod.event.KeyDown(sym=tcod.event.KeySym.RETURN):
                 self.check_tile_interaction()
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.S):
+                self.move_along_path(self.path_to_end)
+            case tcod.event.KeyDown(sym=tcod.event.KeySym.A):
+                self.smart_autoexplore()
             case tcod.event.KeyDown(sym=tcod.event.KeySym.MINUS):
                 self.load_new_level()
             case tcod.event.KeyDown(sym=tcod.event.KeySym.EQUALS):
                 self.omnipresence()
 
-    def render(self, context, console):
-        console.clear()
+    def render(self):  # , context, console):
+        self.console.clear()
         self.update_rgb_with_fov()
-        console.rgb[:] = self.map_rgb
+        self.console.rgb[:] = self.map_rgb
         for entity in self.entities:
-            console.print(
+            self.console.print(
                 entity.x,
                 entity.y,
                 text=entity.char,
                 fg=entity.color,
             )
 
-        console.print(
+        self.console.print(
             self.player.x, self.player.y, text=self.player.char, fg=self.player.color
         )
         # player is separate to make sure it will be render last so it will be always visible
-        context.present(console)
+        self.context.present(self.console)
 
     def change_map(self, map_type, preload=None):
         start_time = time.time()
@@ -66,7 +70,7 @@ class Engine:
                 case "conway":
                     self.map_array = map_gen.conway(80, 60)
                 case "preload":
-                    ...  # TODO implement
+                    self.map_array = map_gen.pre_made(80, 60, preload)
             self.map_transparency = self.compute_transparency(self.map_array)
             start = map_gen.look_for_element(self.map_array, tiles.TILE_STAIRS_UP)
             end = map_gen.look_for_element(self.map_array, tiles.TILE_STAIRS_DOWN)
@@ -78,7 +82,7 @@ class Engine:
             )
             pf = tcod.path.Pathfinder(graph)
             pf.add_root((start[1], start[0]))
-            self.path_to_end = pf.path_to((end[1], end[0])).tolist()
+            self.path_to_end = pf.path_to((end[1], end[0])).tolist()[1:]
             print(self.path_to_end)
             if self.path_to_end[1:] != []:
                 break
@@ -130,3 +134,37 @@ class Engine:
 
     def omnipresence(self):
         self.map_explored = np.ones_like(self.map_array, dtype="bool")
+
+    def move_along_path(self, path):
+        for y, x in path:
+            dx = self.player.x - x
+            dy = self.player.y - y
+            self.try_moving((dx, dy), self.player)
+            self.render()
+            time.sleep(0.03)
+
+    def smart_autoexplore(self):
+        path = self.new_dijkstra2d_map_and_path()
+        print(path)
+        # self.move_along_path(path)
+
+    def new_dijkstra2d_map_and_path(self):
+        # cost = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], dtype="int8")
+        # dist = tcod.path.maxarray((3, 3), dtype=np.int32)
+
+        self.map_explored.astype(dtype="int8")
+        for row in self.map_explored.astype(dtype="int8"):
+            print(*row)
+        for row in self.map_array.astype(dtype="int8"):
+            print(*row)
+        combined = np.where(self.map_array == 1, 1, self.map_explored)
+        for row in combined.astype(dtype="int8"):
+            print(*row)
+
+        # print(self.map_explored.astype(dtype="int8"))
+        # combined = np.where(self.map_array == 1, 0, self.map_explored)
+        # cost = combined.astype(np.uint8)
+        # dist = tcod.path.maxarray(cost.shape, dtype=np.int32)
+        # dist[self.player.y, self.player.x] = 0
+        # tcod.path.dijkstra2d(dist, cost, cardinal=1, diagonal=None, out=dist)
+        # return tcod.path.hillclimb2d(dist, (self.player.y, self.player.x), True, False)
