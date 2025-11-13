@@ -143,7 +143,7 @@ class Engine:
             dy = self.player.y - y
             self.try_moving((dx, dy), self.player)
             self.render()
-            time.sleep(0.03)
+            # time.sleep(0.03)
 
     def autoexplore(self):
         while True:

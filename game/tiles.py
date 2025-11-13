@@ -12,6 +12,7 @@ TILES_COLLISION[TILE_WALL] = True
 TILES_COLLISION[TILE_STAIRS_UP] = False
 TILES_COLLISION[TILE_STAIRS_DOWN] = False
 
+# Tile char and rbga values
 TILES_RGB = [None] * TILES_LENGTH
 TILES_RGB[TILE_EMPTY] = (ord(" "), (0, 0, 0, 0), (30, 30, 30, 0))
 TILES_RGB[TILE_WALL] = (ord("#"), (255, 255, 255, 255), (100, 100, 100, 255))
