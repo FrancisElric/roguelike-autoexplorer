@@ -25,7 +25,6 @@ def main() -> None:
     player_x, player_y = 1, 1
     player = Entity(player_x, player_y, "☺", (255, 255, 0))
 
-    # Create engine instance
     # Create the main console.
     console = tcod.console.Console(WIDTH, HEIGHT)
 
@@ -40,6 +39,7 @@ def main() -> None:
         engine = Engine(player, context, console)
         engine.change_map("preload", "prefabs/map_1.txt")
         while True:
+            # Create engine instance
             engine.render()
 
             # This event loop will wait until at least one event is processed before exiting.

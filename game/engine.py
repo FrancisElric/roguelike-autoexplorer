@@ -1,3 +1,4 @@
+import random
 import numpy as np
 import tcod
 import time
@@ -35,7 +36,7 @@ class Engine:
             case tcod.event.KeyDown(sym=tcod.event.KeySym.S):
                 self.move_along_path(self.path_to_end)
             case tcod.event.KeyDown(sym=tcod.event.KeySym.A):
-                self.smart_autoexplore()
+                self.autoexplore()
             case tcod.event.KeyDown(sym=tcod.event.KeySym.MINUS):
                 self.load_new_level()
             case tcod.event.KeyDown(sym=tcod.event.KeySym.EQUALS):
@@ -109,7 +110,8 @@ class Engine:
             case 2:
                 self.change_map("noise")
             case _:
-                self.change_map("conway")
+                list_of_maps = ("drunkards", "noise", "conway")
+                self.change_map(random.choice(list_of_maps))
         self.level += 1
 
     def compute_transparency(self, map_array):
@@ -143,28 +145,17 @@ class Engine:
             self.render()
             time.sleep(0.03)
 
-    def smart_autoexplore(self):
-        path = self.new_dijkstra2d_map_and_path()
-        print(path)
-        # self.move_along_path(path)
+    def autoexplore(self):
+        while True:
+            path = self.new_dijkstra2d_map_and_path()
+            if len(path) <= 1:
+                print("DONE")
+                break
+            self.move_along_path(path)
 
     def new_dijkstra2d_map_and_path(self):
-        # cost = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], dtype="int8")
-        # dist = tcod.path.maxarray((3, 3), dtype=np.int32)
-
-        self.map_explored.astype(dtype="int8")
-        for row in self.map_explored.astype(dtype="int8"):
-            print(*row)
-        for row in self.map_array.astype(dtype="int8"):
-            print(*row)
-        combined = np.where(self.map_array == 1, 1, self.map_explored)
-        for row in combined.astype(dtype="int8"):
-            print(*row)
-
-        # print(self.map_explored.astype(dtype="int8"))
-        # combined = np.where(self.map_array == 1, 0, self.map_explored)
-        # cost = combined.astype(np.uint8)
-        # dist = tcod.path.maxarray(cost.shape, dtype=np.int32)
-        # dist[self.player.y, self.player.x] = 0
-        # tcod.path.dijkstra2d(dist, cost, cardinal=1, diagonal=None, out=dist)
-        # return tcod.path.hillclimb2d(dist, (self.player.y, self.player.x), True, False)
+        cost = self.map_transparency
+        dist = tcod.path.maxarray(shape=self.map_transparency.shape, dtype="int16")
+        dist = np.where(self.map_explored == 0, 0, dist)
+        tcod.path.dijkstra2d(dist, cost, cardinal=True, diagonal=None, out=dist)
+        return tcod.path.hillclimb2d(dist, (self.player.y, self.player.x), True, False)
