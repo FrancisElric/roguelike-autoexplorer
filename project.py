@@ -37,7 +37,7 @@ def main() -> None:
         # New window for a console of size columns×rows.
     ) as context:
         engine = Engine(player, context, console)
-        engine.change_map("preload", "prefabs/map_1.txt")
+        engine.change_map("preload", "prefabs/map_2.txt")
         while True:
             # Create engine instance
             engine.render()
