@@ -24,6 +24,7 @@ def map_array_to_rgb(map_array, map_explored, map_visible):
     # print(map_explored.ndim) is 2
     # print(map_visible.ndim) is 2
     # So we need that extra, empty dimensions to do vector operations
+
     map_rgb = tile_rgb[map_array]
     map_rgb = np.where(map_explored, map_rgb, tile_rgb[tiles.TILE_EMPTY])
     map_rgb["bg"] = np.where(map_explored[..., None], map_rgb["bg"], (0, 0, 0, 0))

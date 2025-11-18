@@ -1,3 +1,5 @@
+from operator import truediv
+
 import numpy as np
 import tcod
 import time
@@ -103,8 +105,8 @@ def random_walk(width: int, height: int, map_array=None) -> np.ndarray:
     :return:
     """
     DURATION = 50
-    DRUNKARDS = 40
-    STRAIGHT_TIMER = 6  # fun to play with
+    DRUNKARDS = 50
+    STRAIGHT_TIMER = 20  # fun to play with
 
     start_time = time.time()
     if map_array is None:
@@ -178,7 +180,7 @@ def simplex_noise(width: int, height: int) -> np.array:
 
     with np.nditer(map_array, op_flags=["readwrite"]) as it:
         for x in it:
-            if x[...] < -0.2:
+            if x < -0.2:
                 x[...] = 1
             else:
                 x[...] = 0
@@ -195,4 +197,24 @@ def pre_made(width: int, height: int, file_path: str):
     start_time = time.time()
     map_array = np.loadtxt(file_path, dtype="int8")
     print(f"premade took {(time.time() - start_time) * 1000:2f} ms")
+    return map_array
+
+
+def bool_map_array_adder(
+    *maps,
+    width: int = 80,
+    height: int = 60,
+    default_value: bool = False,
+    operation: str = "or",
+):
+    map_array = np.zeros((height, width), dtype="bool")
+    for map in maps:
+        match default_value:
+            case "or":
+                map_array = np.logical_or(map_array, map)
+            case "and":
+                map_array = np.logical_and(map_array, map)
+
+    map_array = map_array.astype("int8")
+    set_stairs(width, height, map_array)
     return map_array

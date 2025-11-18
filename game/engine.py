@@ -42,7 +42,7 @@ class Engine:
             case tcod.event.KeyDown(sym=tcod.event.KeySym.EQUALS):
                 self.omnipresence()
 
-    def render(self):  # , context, console):
+    def render(self):
         self.console.clear()
         self.update_rgb_with_fov()
         self.console.rgb[:] = self.map_rgb
@@ -72,6 +72,9 @@ class Engine:
                     self.map_array = map_gen.conway(80, 60)
                 case "preload":
                     self.map_array = map_gen.pre_made(80, 60, preload)
+                case "conw_and_drunkards":
+                    self.map_array = map_gen.conw_and_drunkards()
+
             self.map_transparency = self.compute_transparency(self.map_array)
             start = map_gen.look_for_element(self.map_array, tiles.TILE_STAIRS_UP)
             end = map_gen.look_for_element(self.map_array, tiles.TILE_STAIRS_DOWN)
@@ -99,7 +102,6 @@ class Engine:
             entity.move(dx, dy)
 
     def check_tile_interaction(self):
-        # print(self.map_array[self.player.y, self.player.x])
         if self.map_array[self.player.y, self.player.x] == tiles.TILE_STAIRS_DOWN:
             self.load_new_level()
 
