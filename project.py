@@ -292,7 +292,7 @@ def random_walk(width: int, height: int, map_array=None) -> np.ndarray:
     :return:
     """
     DURATION = 50
-    DRUNKARDS = 20
+    DRUNKARDS = 30
     STRAIGHT_TIMER = 5  # fun to play with
 
     start_time = time.time()
@@ -316,9 +316,10 @@ def random_walk(width: int, height: int, map_array=None) -> np.ndarray:
         return random.choice(((0, 1), (1, 0), (0, -1), (-1, 0)))
 
     # A point to start the walk, set to center of the map_before
-    x, y = int(width / 2) + random.randint(-10, 10), int(height / 2) + random.randint(
-        -10, 10
-    )
+    max_offset_width = int(width / 20)
+    max_offset_height = int(height / 20)
+    x = int(width / 2) + random.randint(-max_offset_width, max_offset_width)
+    y = int(height / 2) + random.randint(-max_offset_height, max_offset_height)
 
     for _ in range(DRUNKARDS):
         for _ in range(DURATION):
