@@ -87,13 +87,10 @@ class Engine:
             pf = tcod.path.Pathfinder(graph)
             pf.add_root((start[1], start[0]))
             self.path_to_end = pf.path_to((end[1], end[0])).tolist()[1:]
-            print(self.path_to_end)
             if self.path_to_end[1:] != []:
                 break
-            print("Map skipped, no path")
         self.map_explored = np.zeros_like(self.map_array, dtype="bool")
         self.player.x, self.player.y = start[0], start[1]
-        print(f"map changing took {(time.time() - start_time) * 1000:2f} ms")
 
     def try_moving(self, delta: tuple, entity):
         dx = entity.x - delta[0]
@@ -151,7 +148,6 @@ class Engine:
         while True:
             path = self.new_dijkstra2d_map_and_path()
             if len(path) <= 1:
-                print("DONE")
                 break
             self.move_along_path(path)
 
@@ -187,7 +183,6 @@ def map_array_to_rgb(map_array, map_explored, map_visible):
     map_rgb["bg"] = np.where(map_explored[..., None], map_rgb["bg"], (0, 0, 0, 0))
     map_rgb["bg"] = np.where(~map_visible[..., None], map_rgb["bg"], (150, 150, 0, 255))
 
-    print(f"rendering took {(time.time() - start_time) * 1000:2f} ms")
     return map_rgb
 
 
@@ -278,7 +273,6 @@ def conway(width: int, height: int, map_array=None) -> np.ndarray:
         1,
         1,
     )
-    print(f"conway took {(time.time() - start_time) * 1000:2f} ms")
     set_stairs(width, height, map_array)
     return map_array
 
@@ -335,7 +329,6 @@ def random_walk(width: int, height: int, map_array=None) -> np.ndarray:
     visited_cords = sorted(visited_cords, key=lambda coord: (coord[1] + coord[0]))
     map_array[visited_cords[-1]] = tiles.TILE_STAIRS_DOWN
     map_array[visited_cords[0]] = tiles.TILE_STAIRS_UP
-    print(f"drunkards took {(time.time() - start_time) * 1000:2f} ms")
     return map_array
 
 
@@ -376,7 +369,6 @@ def simplex_noise(width: int, height: int, seed: int = None):
             else:
                 x[...] = 0
     map_array = map_array.astype("int8")
-    print(f"noise took {(time.time() - start_time) * 1000:2f} ms")
     set_stairs(width, height, map_array)
     # TODO will need to fill up spaces that do not connect to center of the map
     return map_array
@@ -387,7 +379,6 @@ def pre_made(width: int = 80, height: int = 60, file_path: str = ""):
     # TODO loadtxt vs genfromtxt? genfromtxt jest w stanie dodać brakujęce pola, więc wydaje się być bardziej future-proof?
     start_time = time.time()
     map_array = np.loadtxt(file_path, dtype="int8")
-    print(f"premade took {(time.time() - start_time) * 1000:2f} ms")
     return map_array
 
 
