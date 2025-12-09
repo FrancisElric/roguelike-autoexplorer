@@ -432,7 +432,7 @@ def main() -> None:
         rows=console.height,
         tileset=tileset,
         title="Roguelike for CS50P",
-        # New window for a console of size columns×rows.
+        # New window for a console of size columns x rows.
     ) as context:
         engine = Engine(player, context, console)
         engine.change_map("preload", "prefabs/map_2.txt")
@@ -441,10 +441,7 @@ def main() -> None:
             engine.render()
 
             # This event loop will wait until at least one event is processed before exiting.
-            # For a non-blocking event loop replace `tcod.event.wait` with `tcod.event.get`.
             for event in tcod.event.wait():
-                # context.convert_event(event)  # Sets tile coordinates for mouse events.
-                # DEBUG print(event)  # Print event names and attributes.
                 engine.event_handling(event)
 
 

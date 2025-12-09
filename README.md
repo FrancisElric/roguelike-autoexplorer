@@ -1,8 +1,8 @@
-# Final Project for CS50P course
-## dungeon generation and auto-exploration
+# Final Project for CS50P course:
+## Dungeon Generation and Auto-Exploration
 
 ---
-Done by **Mieszko Sadek**
+- **Author:** _Mieszko Sadek_
 - **Github:** FrancisElric
 - **edX:** mieszko\_
 - **from:** Poznań, Poland

@@ -11,6 +11,6 @@
 
 ## TODO
 - [x] move engine and map_* logic to project.py
-- [ ] write tests for map_generation
+- [x] write tests for map_generation
 - [x] update requirements.txt
 - [ ] write readme

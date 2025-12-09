@@ -1,8 +1,8 @@
 import random
-from itertools import dropwhile
-
+import tcod
 import pytest
 import numpy as np
+
 from project import (
     look_for_element,
     set_stairs,
@@ -12,7 +12,6 @@ from project import (
     pre_made,
     map_array_to_rgb,
 )
-
 import game.tiles as tiles
 
 
@@ -20,22 +19,6 @@ import game.tiles as tiles
 def set_seed():
     random.seed(42)
     np.random.seed(42)
-
-
-def test_pre_made():
-    map_reference = np.array(
-        [
-            [1, 1, 1, 1, 1, 1],
-            [1, 0, 2, 0, 0, 1],
-            [1, 0, 0, 0, 0, 1],
-            [1, 0, 0, 3, 0, 1],
-            [1, 0, 0, 0, 0, 1],
-            [1, 1, 1, 1, 1, 1],
-        ],
-        dtype="int8",
-    )
-    map_test = pre_made(file_path="prefabs/test_map_1.txt")
-    assert np.array_equal(map_reference, map_test)
 
 
 def test_look_for_element():
@@ -119,6 +102,22 @@ def test_set_stairs():
     assert np.array_equal(map_array_result, set_stairs(6, 6, map_array))
 
 
+def test_pre_made():
+    map_reference = np.array(
+        [
+            [1, 1, 1, 1, 1, 1],
+            [1, 0, 2, 0, 0, 1],
+            [1, 0, 0, 0, 0, 1],
+            [1, 0, 0, 3, 0, 1],
+            [1, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1],
+        ],
+        dtype="int8",
+    )
+    map_test = pre_made(file_path="prefabs/test_map_1.txt")
+    assert np.array_equal(map_reference, map_test)
+
+
 def test_simplex_noise():
     map_array_expected = np.array(
         [
@@ -174,3 +173,76 @@ def test_random_walk():
         dtype="int8",
     )
     assert np.array_equal(map_array_expected, random_walk(10, 10))
+
+
+def test_map_array_to_rgb():
+    map_array = np.array(
+        [
+            [1, 1, 1, 1, 1, 1],
+            [1, 0, 2, 0, 0, 1],
+            [1, 0, 0, 0, 0, 1],
+            [1, 0, 0, 3, 0, 1],
+            [1, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1],
+        ],
+        dtype="int8",
+    )
+    map_rgb_expected = np.array(
+        [
+            [
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+            ],
+            [
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+                (32, [0, 0, 0, 0], [150, 150, 0, 255]),
+                (60, [255, 255, 0, 255], [150, 150, 0, 255]),
+                (32, [0, 0, 0, 0], [150, 150, 0, 255]),
+                (32, [0, 0, 0, 0], [150, 150, 0, 255]),
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+            ],
+            [
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+                (32, [0, 0, 0, 0], [150, 150, 0, 255]),
+                (32, [0, 0, 0, 0], [150, 150, 0, 255]),
+                (32, [0, 0, 0, 0], [150, 150, 0, 255]),
+                (32, [0, 0, 0, 0], [150, 150, 0, 255]),
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+            ],
+            [
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+                (32, [0, 0, 0, 0], [150, 150, 0, 255]),
+                (32, [0, 0, 0, 0], [150, 150, 0, 255]),
+                (62, [255, 255, 0, 255], [150, 150, 0, 255]),
+                (32, [0, 0, 0, 0], [150, 150, 0, 255]),
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+            ],
+            [
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+                (32, [0, 0, 0, 0], [150, 150, 0, 255]),
+                (32, [0, 0, 0, 0], [150, 150, 0, 255]),
+                (32, [0, 0, 0, 0], [150, 150, 0, 255]),
+                (32, [0, 0, 0, 0], [150, 150, 0, 255]),
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+            ],
+            [
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+                (35, [255, 255, 255, 255], [150, 150, 0, 255]),
+            ],
+        ],
+        dtype=tcod.console.Console.DTYPE,
+    )
+    map_explored = np.ones_like(map_array, dtype="bool")
+    map_visible = map_explored
+
+    assert np.array_equal(
+        map_rgb_expected, map_array_to_rgb(map_array, map_explored, map_visible)
+    )
