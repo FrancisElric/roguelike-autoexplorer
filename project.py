@@ -361,13 +361,7 @@ def simplex_noise(width: int, height: int, seed: int = None):
         -1,
     )
     # map_array and map_rgb must use reversed dimensions (width <-> height)
-
-    with np.nditer(map_array, op_flags=["readwrite"]) as it:
-        for x in it:
-            if x < -0.2:
-                x[...] = 1
-            else:
-                x[...] = 0
+    map_array = np.where(map_array < -0.1, 1, 0)
     map_array = map_array.astype("int8")
     set_stairs(width, height, map_array)
     # TODO will need to fill up spaces that do not connect to center of the map
